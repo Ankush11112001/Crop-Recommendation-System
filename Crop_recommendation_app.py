@@ -6,11 +6,10 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 import os
 
-import streamlit as st
-import pandas as pd
-import streamlit as st
-# ... other imports
-# Crop image mapping (use online images or local ones)
+# 1. Page Config
+st.set_page_config(page_title="Smart Crop AI", layout="wide", initial_sidebar_state="collapsed")
+
+# 2. Crop image mapping
 CROP_IMAGES = {
     "rice": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4FArXQuGECLU50-0bBjXg53jJKir-pAR2wQ&s",
     "maize": "https://cdn.britannica.com/36/167236-050-BF90337E/Ears-corn.jpg",
@@ -35,202 +34,123 @@ CROP_IMAGES = {
     "jute": "https://thumbs.dreamstime.com/b/jute-plants-field-jute-cultivation-assam-india-jute-plants-field-jute-cultivation-assam-india-jute-fiber-258026749.jpg",
     "coffee": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe4yrLCeFKzilrAmAk5JIigzAByi9j6acYEA&s"
 }
-# 1. SET WIDE MODE (Removes the narrow center column)
-st.set_page_config(page_title="Smart Crop AI", layout="wide", initial_sidebar_state="collapsed")
 
-def apply_dynamic_full_width_theme():
+def apply_final_mobile_theme():
     st.markdown(
         """
         <style>
-        /* 2. REMOVE CONTAINER LIMITS */
-        .block-container {
-            max-width: 100% !important;
-            padding-top: 2rem !important;
-            padding-bottom: 0rem !important;
-            padding-left: 5rem !important;
-            padding-right: 5rem !important;
-        }
-
-        /* 3. DYNAMIC BACKGROUND */
-        .stApp {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                        url("https://images.unsplash.com/photo-1560493676-04071c5f467b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80");
-            background-size: cover;
-            background-attachment: fixed;
-        }
-
-        /* 4. ANIMATED TITLE */
-        .dynamic-title {
-            transition: transform 0.3s ease-in-out;
-            cursor: default;
-        }
-        .dynamic-title:hover {
-            transform: scale(1.02);
-            color: #8bc34a !important;
-        }
-
-        /* 5. PULSE ANIMATION FOR RESULT */
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 195, 74, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(139, 195, 74, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 195, 74, 0); }
-        }
-        .result-card {
-            animation: pulse 2s infinite;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid #8bc34a;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        /* Crop Card Animation */
-@keyframes slideFade {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.crop-card {
-    animation: slideFade 1s ease forwards;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 25px;
-    text-align: center;
-    border: 2px solid #8bc34a;
-    margin-top: 30px;
-}
-
-.crop-card img {
-    width: 280px;
-    height: 180px;
-    border-radius: 15px;
-    object-fit: cover;
-    margin-bottom: 15px;
-}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-apply_dynamic_full_width_theme()
-
-def apply_tech_farming_theme():
-    st.markdown(
-        """
-        <style>
-        /* 1. The Background - Kept as is */
         .stApp {
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
                         url("https://images.unsplash.com/photo-1560493676-04071c5f467b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80") !important;
             background-size: cover !important;
-            background-position: center !important;
             background-attachment: fixed !important;
         }
 
-        /* 2. Modified Container (Removed glass effect/borders) */
         .main .block-container {
-            background-color: transparent !important; /* Made transparent */
-            backdrop-filter: none !important;           /* Removed blur */
-            padding: 50px !important;
-            border-radius: 0px !important;
-            border: none !important;                   /* Removed border */
-            margin-top: 50px !important;
+            background-color: transparent !important;
+            max-width: 900px !important;
+            margin: auto !important;
+            padding: 2rem 1rem !important;
         }
 
-        /* 3. Text Visibility */
-        h1, h2, h3, p, label, .stMarkdown {
+        h1, h2, h3, p, label, .stMarkdown p {
             color: #ffffff !important;
+            background-color: transparent !important;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+            text-align: center;
         }
 
-        /* 4. Inputs */
-        .stNumberInput input, .stSelectbox div {
+        .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
             background-color: white !important;
             color: black !important;
             border-radius: 8px !important;
         }
-        
-        /* 5. The Button */
+
+        .crop-card {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #8bc34a;
+            margin: 30px auto;
+            max-width: 450px;
+        }
+
+        .crop-card img {
+            width: 100% !important;
+            max-width: 300px !important;
+            height: auto !important;
+            border-radius: 15px;
+            margin: 15px auto;
+            display: block;
+        }
+
         .stButton>button {
             background-color: #4CAF50 !important;
             color: white !important;
-            border: none !important;
-            padding: 10px 24px !important;
-            font-size: 18px !important;
-            font-weight: bold !important;
             border-radius: 12px !important;
             width: 100% !important;
+            height: 3em;
+            font-size: 1.2rem !important;
+            margin-top: 10px;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
+
+apply_final_mobile_theme()
+
 # Load dataset
 @st.cache_data
 def load_data():
     if os.path.exists("Crop_recommendation.csv"):
-        data = pd.read_csv("Crop_recommendation.csv")
-        return data
-    st.error("Dataset not found! Please place 'Crop_recommendation.csv' in the project directory.")
+        return pd.read_csv("Crop_recommendation.csv")
     return pd.DataFrame()
 
 data = load_data()
 if data.empty:
+    st.error("Dataset not found! Please check the filename.")
     st.stop()
 
 X = data[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']]
 y = data['label']
-
-# Train/test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Streamlit UI
 st.title("Smart Crop Recommendation System")
-st.write("Enter the soil and environmental parameters below:")
+st.write("Fill in the soil details below:")
 
-N = st.number_input('Nitrogen (N)', min_value=0.0, max_value=140.0, value=50.0)
-P = st.number_input('Phosphorus (P)', min_value=5.0, max_value=145.0, value=55.0)
-K = st.number_input('Potassium (K)', min_value=5.0, max_value=205.0, value=45.0)
-temperature = st.number_input('Temperature (°C)', min_value=8.0, max_value=43.0, value=25.0)
-humidity = st.number_input('Humidity (%)', min_value=15.0, max_value=99.0, value=80.0)
-ph = st.number_input('pH', min_value=3.5, max_value=9.9, value=6.5)
-rainfall = st.number_input('Rainfall (mm)', min_value=20.0, max_value=300.0, value=110.0)
+# Better mobile input layout
+col1, col2 = st.columns(2)
+with col1:
+    N = st.number_input('Nitrogen (N)', 0.0, 140.0, 50.0)
+    P = st.number_input('Phosphorus (P)', 5.0, 145.0, 55.0)
+    K = st.number_input('Potassium (K)', 5.0, 205.0, 45.0)
+with col2:
+    temp = st.number_input('Temperature (°C)', 8.0, 43.0, 25.0)
+    hum = st.number_input('Humidity (%)', 15.0, 99.0, 80.0)
+    ph = st.number_input('pH', 3.5, 9.9, 6.5)
+
+rainfall = st.number_input('Rainfall (mm)', 20.0, 300.0, 110.0)
 model_type = st.selectbox('Choose Model', ['Decision Tree', 'Naive Bayes'])
 
 # Model Training
-if model_type == 'Decision Tree':
-    model = DecisionTreeClassifier(random_state=42)
-else:
-    model = GaussianNB()
-
+model = DecisionTreeClassifier(random_state=42) if model_type == 'Decision Tree' else GaussianNB()
 model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-acc = accuracy_score(y_test, y_pred)
+acc = accuracy_score(y_test, model.predict(X_test))
 
-# Prediction
-if st.button("Recommend Crop"):
-    input_features = [[N, P, K, temperature, humidity, ph, rainfall]]
-    prediction = model.predict(input_features)[0].lower()
-
-    crop_image = CROP_IMAGES.get(prediction, 
-        "https://images.unsplash.com/photo-1501004318641-b39e6451bec6")
+# Prediction Button (Placed outside columns for visibility)
+if st.button("Recommend My Crop"):
+    prediction = model.predict([[N, P, K, temp, hum, ph, rainfall]])[0].lower()
+    crop_image = CROP_IMAGES.get(prediction, "https://images.unsplash.com/photo-1501004318641-b39e6451bec6")
 
     st.markdown(f"""
         <div class="crop-card">
-            <h3 style="color:white;">🌱 Recommended Crop</h3>
-            <img src="{crop_image}" alt="{prediction}">
-            <h1 style="color:#8bc34a; font-size:45px;">{prediction.upper()}</h1>
-            <p style="color:white; opacity:0.8;">
-                Model Confidence: {acc*100:.2f}%
-            </p>
+            <h3 style="margin-bottom:0;">🌱 Recommended Crop</h3>
+            <img src="{crop_image}">
+            <h1 style="color:#8bc34a; margin-top:0;">{prediction.upper()}</h1>
+            <p style="font-size:0.9rem; opacity:0.8;">Model Confidence: {acc*100:.1f}%</p>
         </div>
     """, unsafe_allow_html=True)
-
