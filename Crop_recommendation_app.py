@@ -126,7 +126,7 @@ def apply_tech_farming_theme():
     st.markdown(
         """
         <style>
-        /* 1. The Background */
+        /* 1. The Background - Kept as is */
         .stApp {
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
                         url("https://images.unsplash.com/photo-1560493676-04071c5f467b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80") !important;
@@ -135,13 +135,13 @@ def apply_tech_farming_theme():
             background-attachment: fixed !important;
         }
 
-        /* 2. The Main Container (Glass effect) */
+        /* 2. Modified Container (Removed glass effect/borders) */
         .main .block-container {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            backdrop-filter: blur(12px) !important;
+            background-color: transparent !important; /* Made transparent */
+            backdrop-filter: none !important;           /* Removed blur */
             padding: 50px !important;
-            border-radius: 25px !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 0px !important;
+            border: none !important;                   /* Removed border */
             margin-top: 50px !important;
         }
 
@@ -151,7 +151,7 @@ def apply_tech_farming_theme():
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
         }
 
-        /* 4. Inputs (Making them solid so they don't fade) */
+        /* 4. Inputs */
         .stNumberInput input, .stSelectbox div {
             background-color: white !important;
             color: black !important;
@@ -173,8 +173,6 @@ def apply_tech_farming_theme():
         """,
         unsafe_allow_html=True
     )
-
-apply_tech_farming_theme()
 # Load dataset
 @st.cache_data
 def load_data():
@@ -235,3 +233,4 @@ if st.button("Recommend Crop"):
             </p>
         </div>
     """, unsafe_allow_html=True)
+
