@@ -5,7 +5,59 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 import os
+def apply_tech_farming_theme():
+    st.markdown(
+        """
+        <style>
+        /* 1. The Background */
+        .stApp {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url("https://images.unsplash.com/photo-1560493676-04071c5f467b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80") !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
+        }
 
+        /* 2. The Main Container (Glass effect) */
+        .main .block-container {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(12px) !important;
+            padding: 50px !important;
+            border-radius: 25px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            margin-top: 50px !important;
+        }
+
+        /* 3. Text Visibility */
+        h1, h2, h3, p, label, .stMarkdown {
+            color: #ffffff !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+        }
+
+        /* 4. Inputs (Making them solid so they don't fade) */
+        .stNumberInput input, .stSelectbox div {
+            background-color: white !important;
+            color: black !important;
+            border-radius: 8px !important;
+        }
+        
+        /* 5. The Button */
+        .stButton>button {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            border: none !important;
+            padding: 10px 24px !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            border-radius: 12px !important;
+            width: 100% !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+apply_tech_farming_theme()
 # Load dataset
 @st.cache_data
 def load_data():
@@ -56,4 +108,5 @@ if st.button("Recommend Crop"):
     st.write(f"Model accuracy on validation set: {acc*100:.2f}%")
 
 st.markdown("---")
+
 st.markdown("Use Case: Smart farming apps. [Agriculture India Dataset on Kaggle]")
