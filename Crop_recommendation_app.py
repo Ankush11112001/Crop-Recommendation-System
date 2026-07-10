@@ -5,6 +5,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 import os
+from sklearn.ensemble import RandomForestClassifier
 
 # 1. Page Config
 st.set_page_config(page_title="Smart Crop AI", layout="wide", initial_sidebar_state="collapsed")
@@ -123,34 +124,67 @@ st.title("Smart Crop Recommendation System")
 st.write("Fill in the soil details below:")
 
 # Better mobile input layout
+# Better mobile input layout
 col1, col2 = st.columns(2)
+
 with col1:
     N = st.number_input('Nitrogen (N)', 0.0, 140.0, 50.0)
     P = st.number_input('Phosphorus (P)', 5.0, 145.0, 55.0)
     K = st.number_input('Potassium (K)', 5.0, 205.0, 45.0)
+
 with col2:
-    temp = st.number_input('Temperature (°C)', 8.0, 43.0, 25.0)
+    # Allow sensor values up to 100°C so we can validate them
+    temp = st.number_input('Temperature (°C)', 0.0, 100.0, 25.0)
     hum = st.number_input('Humidity (%)', 15.0, 99.0, 80.0)
     ph = st.number_input('pH', 3.5, 9.9, 6.5)
 
 rainfall = st.number_input('Rainfall (mm)', 20.0, 300.0, 110.0)
-model_type = st.selectbox('Choose Model', ['Decision Tree', 'Naive Bayes'])
+model_type = st.selectbox(
+    'Choose Model',
+    ['Decision Tree','Random Forest'] #'Naive Bayes', 
+)
+
 
 # Model Training
-model = DecisionTreeClassifier(random_state=42) if model_type == 'Decision Tree' else GaussianNB()
+if model_type == "Decision Tree":
+    model = DecisionTreeClassifier(random_state=42)
+#elif model_type == "Naive Bayes":
+ #   model = GaussianNB()
+else:
+    model = RandomForestClassifier(
+        n_estimators=100,
+        random_state=42
+    )
 model.fit(X_train, y_train)
 acc = accuracy_score(y_test, model.predict(X_test))
 
 # Prediction Button (Placed outside columns for visibility)
+# Prediction Button
 if st.button("Recommend My Crop"):
-    prediction = model.predict([[N, P, K, temp, hum, ph, rainfall]])[0].lower()
-    crop_image = CROP_IMAGES.get(prediction, "https://images.unsplash.com/photo-1501004318641-b39e6451bec6")
 
+    # Validate sensor values
+    if temp > 50:
+        st.error("❌ Invalid Temperature! Temperature cannot be greater than 50°C.")
+        st.stop()
+
+    # Predict crop
+    prediction = model.predict([[N, P, K, temp, hum, ph, rainfall]])[0].lower()
+
+    # Get crop image
+    crop_image = CROP_IMAGES.get(
+        prediction,
+        "https://images.unsplash.com/photo-1501004318641-b39e6451bec6"
+    )
+
+    # Display result
     st.markdown(f"""
         <div class="crop-card">
             <h3 style="margin-bottom:0;">🌱 Recommended Crop</h3>
             <img src="{crop_image}">
             <h1 style="color:#8bc34a; margin-top:0;">{prediction.upper()}</h1>
-            <p style="font-size:0.9rem; opacity:0.8;">Model Confidence: {acc*100:.1f}%</p>
+            <p style="font-size:0.9rem; opacity:0.8;">
+                Model Accuracy: {acc*100:.1f}%
+            </p>
         </div>
     """, unsafe_allow_html=True)
+
